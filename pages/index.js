@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Quiz from '../components/Quiz';
+import Quiz from '@/components/quiz.js';
 
 export default function Home() {
   return (

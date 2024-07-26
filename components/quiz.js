@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Question from './question';
-import Result from './result';
+import Question from './question.js';
+import Result from './result.js';
 
 const questions = {
   start: {

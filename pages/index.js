@@ -3,7 +3,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Slider } from './Slider';
+import { Slider } from '@/components/ui/slider';
 
 const PricingCalculator = () => {
   const [state, setState] = useState({

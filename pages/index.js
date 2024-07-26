@@ -11,28 +11,38 @@ const PricingCalculator = () => {
     attendance: 0,
     annualRevenue: 0,
     discovery: {
-      base: { checked: true, quantity: 1, price: 2500 },
-      localOnSite: { checked: false, quantity: 1, price: 3000 },
-      onSite: { checked: false, quantity: 1, price: 8500 },
-      survey: { checked: false, quantity: 1, price: 1000 },
-      demographicReports: { checked: true, quantity: 1, price: 275 },
-      focusGroups: { checked: false, quantity: 1, price: 1000 },
-      brandAudit: { checked: false, quantity: 1, price: 500 },
-      webAudit: { checked: false, quantity: 1, price: 500 },
+      base: { checked: true, quantity: 1, price: 2500, multiplier: 0, subjectiveFactor: 1, sizeFactor: 0.25 },
+      onSite: { checked: false, quantity: 1, price: 1000,  multiplier: 7500, subjectiveFactor: 0, sizeFactor: 0 },
+      survey: { checked: false, quantity: 1, price: 500, multiplier: 500, subjectiveFactor: 0.5, sizeFactor: 1 },
+      demographicReports: { checked: true, quantity: 1, price: 100, multiplier: 175, subjectiveFactor: 0, sizeFactor: 0 },
+      focusGroups: { checked: false, quantity: 1, price: 500, multiplier: 500, subjectiveFactor: 1, sizeFactor: 1 },
+      brandAudit: { checked: false, quantity: 1, price: 250, multiplier: 250, subjectiveFactor: 0, sizeFactor: 1 },
+      webAudit: { checked: false, quantity: 1, price: 250, multiplier: 250, subjectiveFactor: 0, sizeFactor: 1 },
+    },
+    consulting: {
+      valuePropositions: { checked: true, quantity: 1, price: 100, multiplier: 0, subjectiveFactor: 1, sizeFactor: 1 },
+      brandPromise: { checked: true, quantity: 1, price: 200, multiplier: 0, subjectiveFactor: 1, sizeFactor: 1 },
+      coreStory: { checked: true, quantity: 1, price: 200, multiplier: 0, subjectiveFactor: 1, sizeFactor: 1  },
+      oneLiner: { checked: true, quantity: 1, price: 200, multiplier: 0, subjectiveFactor: 1, sizeFactor: 1 },
     },
     messaging: {
-      base: { checked: true, quantity: 1, price: 1000 },
-      persona: { checked: true, quantity: 3, price: 600 },
-      archetype: { checked: true, quantity: 1, price: 300 },
-      toneWords: { checked: true, quantity: 2, price: 250 },
-      valuePropositions: { checked: true, quantity: 5, price: 725 },
-      brandPromise: { checked: true, quantity: 1, price: 350 },
-      coreStory: { checked: true, quantity: 1, price: 600 },
-      oneLiner: { checked: true, quantity: 1, price: 350 },
+      base: { checked: true, quantity: 1, price: 1000, multiplier: 0, subjectiveFactor: 1, sizeFactor: 1.5 },
+      missionVisionValues: { checked: true, quantity: 1, price: 7500, subjectiveFactor: 0, sizeFactor: 0 },
+      nameChange: { checked: true, quantity: 1, price: 5000, subjectiveFactor: 0, sizeFactor: 0 },
+    },
+    visual: {
+      base: { checked: true, quantity: 1, price: 1000, subjectiveFactor: 0, sizeFactor: 0 },
+      persona: { checked: true, quantity: 1, price: 150, subjectiveFactor: 0, sizeFactor: 0 },
     },
   });
 
   const [total, setTotal] = useState(0);
+  const [breakdown, setBreakdown] = useState({
+    discovery: 0,
+    messaging: 0,
+    visual: 0,
+    consulting: 0,
+  });
 
   useEffect(() => {
     calculateTotal();
@@ -73,14 +83,46 @@ const PricingCalculator = () => {
 
   const calculateTotal = () => {
     let sum = 0;
-    Object.values(state.discovery).forEach(item => {
+    const breakdown = {
+      discovery: 0,
+      messaging: 0,
+      visual: 0,
+      consulting: 0,
+    };
+
+    const applyFactors = (price, item) => {
+      let adjustedPrice = price;
+      adjustedPrice *= (1 + item.subjectiveFactor / 100);
+      adjustedPrice *= (1 + item.sizeFactor / 100);
+      return adjustedPrice;
+    };
+
+    Object.entries(state.discovery).forEach(([key, item]) => {
       if (item.checked) {
-        sum += item.price * item.quantity;
+        const itemTotal = applyFactors(item.price * item.quantity, item);
+        sum += itemTotal;
+        breakdown.discovery += itemTotal;
       }
     });
-    Object.values(state.messaging).forEach(item => {
+    Object.entries(state.messaging).forEach(([key, item]) => {
       if (item.checked) {
-        sum += item.price * item.quantity;
+        const itemTotal = applyFactors(item.price * item.quantity, item);
+        sum += itemTotal;
+        breakdown.messaging += itemTotal;
+      }
+    });
+    Object.entries(state.visual).forEach(([key, item]) => {
+      if (item.checked) {
+        const itemTotal = applyFactors(item.price * item.quantity, item);
+        sum += itemTotal;
+        breakdown.visual += itemTotal;
+      }
+    });
+    Object.entries(state.consulting).forEach(([key, item]) => {
+      if (item.checked) {
+        const itemTotal = applyFactors(item.price * item.quantity, item);
+        sum += itemTotal;
+        breakdown.consulting += itemTotal;
       }
     });
 
@@ -95,6 +137,7 @@ const PricingCalculator = () => {
     }
 
     setTotal(sum);
+    setBreakdown(breakdown);
   };
 
   const renderCategory = (category, title) => (

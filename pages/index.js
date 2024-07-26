@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <Head>
-        <title>ArtSpeak Quiz</title>
+        <title>Branding Questionnaire Quiz</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

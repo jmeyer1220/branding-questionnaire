@@ -108,12 +108,13 @@ const PricingCalculator = () => {
       visual: 0,
     };
 
-    const applyFactors = (price, item) => {
+ const applyFactors = (price, item) => {
       let adjustedPrice = price;
       adjustedPrice *= (1 + item.subjectiveFactor * state.subjectiveFactor / 100);
       adjustedPrice *= (1 + item.sizeFactor * state.sizeFactor / 100);
       return adjustedPrice;
     };
+
 
     Object.entries(state).forEach(([category, items]) => {
       if (typeof items === 'object' && items !== null) {
@@ -137,7 +138,13 @@ const PricingCalculator = () => {
 
     setTotal(sum);
     setBreakdown(newBreakdown);
+    useEffect(() => {
+    calculateTotal();
+  }, [calculateTotal]);
+    
   };
+
+
 
   const renderCategory = (category, title) => (
     <Card className="mb-8 overflow-hidden shadow-lg bg-white dark:bg-gray-800">
